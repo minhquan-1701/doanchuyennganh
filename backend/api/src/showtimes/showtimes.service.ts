@@ -30,11 +30,11 @@ export class ShowtimesService {
       show_date: new Date(dto.showDate),
       start_time: this.toTime(dto.startTime),
       end_time: this.toTime(dto.endTime),
-      format: dto.format?.trim(),
+      format: dto.format?.trim() || '2D',
       language: dto.language?.trim(),
       subtitle: dto.subtitle?.trim(),
-      status: dto.status?.trim(),
-      price: dto.price,
+      status: dto.status?.trim() || 'available', // Ensure default value
+      price: dto.price|| '45000',
     };
 
     const showtime = await this.prisma.showtimes.create({ data });

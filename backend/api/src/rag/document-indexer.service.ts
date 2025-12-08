@@ -129,9 +129,8 @@ export class DocumentIndexerService {
     async indexShowtimes(): Promise<number> {
         this.logger.log('Starting showtime indexing...');
 
-        // Get showtimes from 30 days ago to future
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        // Get CURRENT and FUTURE showtimes only (not past ones)
+        const now = new Date();
 
         const showtimes = await this.prisma.showtimes.findMany({
             include: {
@@ -162,11 +161,15 @@ export class DocumentIndexerService {
                 },
             },
             where: {
+                // Only get showtimes that haven't ended yet
                 show_date: {
-                    gte: thirtyDaysAgo,
+                    gte: now,  // Today and future
                 },
             },
-            // Get all showtimes within the date range
+            orderBy: {
+                show_date: 'asc', // Order by date ascending
+            },
+            // Get all future showtimes
         });
 
         this.logger.log(`Found ${showtimes.length} showtimes to index`);
@@ -440,11 +443,10 @@ export class DocumentIndexerService {
     }
 
     async countShowtimesInDb(): Promise<number> {
-        const thirtyDaysAgo = new Date();
-        thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+        const now = new Date();
         return this.prisma.showtimes.count({
             where: {
-                show_date: { gte: thirtyDaysAgo },
+                show_date: { gte: now },  // Match the indexing filter
             },
         });
     }
@@ -502,8 +504,8 @@ Phân loại: ${movie.age_restriction || ''}
 `.trim();
 
         return text;
-    }  
-  
+    }
+
     private createShowtimeText(showtime: any, genres: string): string {
         const date = new Date(showtime.show_date);
         const startTime = showtime.start_time.toTimeString().substring(0, 5);
@@ -531,17 +533,17 @@ Phân loại: ${movie.age_restriction || ''}
       Giảm tiền : ${promotion.discount_amount?.toNumber().toLocaleString('vi-VN') || 0} VNĐ
       Thời gian: ${new Date(promotion.start_date).toLocaleDateString('vi-VN')} - ${new Date(promotion.end_date).toLocaleDateString('vi-VN')}
       Mua tối thiểu : ${promotion.min_purchase?.toNumber().toLocaleString('vi-VN') || 0} VNĐ
-    `.trim();  
-    }  
-  
-    private createCinemaText(cinema: any): string { 
-                const dayNames = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
+    `.trim();
+    }
+
+    private createCinemaText(cinema: any): string {
+        const dayNames = ['Chủ nhật', 'Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7'];
         const operationHoursText = cinema.operation_hours
             .map((oh: any) => `${dayNames[oh.day_of_week]}: ${oh.opening_time?.toTimeString().substring(0, 5)} - ${oh.closing_time?.toTimeString().substring(0, 5)}`)
             .join(', ');
 
         return `  
-      Rạp chiếu phim: ${cinema.cinema_name }
+      Rạp chiếu phim: ${cinema.cinema_name}
       Địa chỉ: ${cinema.address} 
       Thành phố: ${cinema.city} 
       Mô tả: ${cinema.description || ''} 
