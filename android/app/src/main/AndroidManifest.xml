@@ -69,6 +69,17 @@
                     android:scheme="partnerapp"
                     android:host="alexcinema" />
             </intent-filter>
+
+            <!-- ========= RESET PASSWORD DEEPLINK ========= -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <!-- Reset password deep link -->
+                <data
+                    android:scheme="alexcinema"
+                    android:host="reset-password" />
+            </intent-filter>
         </activity>
 
         <!-- ========= ZALOPAY CONFIG (META-DATA) ========= -->

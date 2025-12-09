@@ -194,10 +194,10 @@ Hãy trả lời dựa trên thông tin trên. Nếu thông tin không đủ, h�
   /// Get suggestions for user
   Future<List<String>> getSuggestions() async {
     final suggestions = [
+      'Tôi muốn đặt vé xem phim',
       'Phim gì đang hot hôm nay?',
       'Tìm phim hành động hay',
       'Đặt vé xem phim tối nay',
-      'Suất chiếu phim Avengers',
       'Giá vé bao nhiêu?',
     ];
     return suggestions;

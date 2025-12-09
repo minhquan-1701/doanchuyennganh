@@ -169,6 +169,26 @@ export class AuthService {
     };
   }
 
+  async resetPassword(token: string, newPassword: string) {
+    const user = await this.usersService.findByResetToken(token);
+
+    if (!user) {
+      throw new UnauthorizedException(
+        'Token không hợp lệ hoặc đã hết hạn',
+      );
+    }
+
+    // Update password
+    await this.usersService.updatePassword(user.id_users, newPassword);
+
+    // Clear reset token
+    await this.usersService.clearResetToken(user.id_users);
+
+    return {
+      message: 'Mật khẩu đã được đặt lại thành công',
+    };
+  }
+
   private async validateCredentials(
     usernameOrEmail: string,
     password: string,

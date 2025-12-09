@@ -41,6 +41,10 @@ class AuthRepository {
     return _remoteDataSource.requestPasswordReset(dto);
   }
 
+  Future<String> resetPassword(ResetPasswordRequestDto dto) {
+    return _remoteDataSource.resetPassword(dto);
+  }
+
   Future<void> logout() async {
     await _tokenStorage.clearToken();
     _apiClient.updateAuthToken(null);

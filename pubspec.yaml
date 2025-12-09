@@ -125,6 +125,7 @@ flutter:
     - assets/
     - assets/images/
     - assets/images/avatarchatbox.jpg
+    - assets/images/alexcinema_2.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see

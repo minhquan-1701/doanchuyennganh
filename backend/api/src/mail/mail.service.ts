@@ -49,7 +49,7 @@ export class MailService {
       this.configService.get<string>('MAIL_FROM') ??
       (user ? `${user}` : 'no-reply@example.com');
     this.appUrl =
-      this.configService.get<string>('APP_URL') ?? 'http://localhost:3000';
+      this.configService.get<string>('API_URL') ?? 'http://localhost:3000';
 
     if (host && user && pass) {
       this.transporter = nodemailer.createTransport({
@@ -385,6 +385,7 @@ export class MailService {
     const normalizedBase = this.appUrl.endsWith('/')
       ? this.appUrl.slice(0, -1)
       : this.appUrl;
-    return `${normalizedBase}/reset-password?token=${token}`;
+    return `${normalizedBase}/auth/reset-password?token=${token}`;
   }
 }
+

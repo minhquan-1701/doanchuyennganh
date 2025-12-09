@@ -28,11 +28,28 @@ class AuthRemoteDataSource {
   }
 
   Future<String> requestPasswordReset(ForgotPasswordRequestDto dto) async {
-    final response =
-        await _client.post('auth/forgot-password', body: dto.toJson());
-    final map =
-        ensureMap(response, errorMessage: 'Invalid forgot password response');
+    final response = await _client.post(
+      'auth/forgot-password',
+      body: dto.toJson(),
+    );
+    final map = ensureMap(
+      response,
+      errorMessage: 'Invalid forgot password response',
+    );
     return (map['message'] as String?) ??
         'Yêu cầu đặt lại mật khẩu đã được gửi.';
+  }
+
+  Future<String> resetPassword(ResetPasswordRequestDto dto) async {
+    final response = await _client.post(
+      'auth/reset-password',
+      body: dto.toJson(),
+    );
+    final map = ensureMap(
+      response,
+      errorMessage: 'Invalid reset password response',
+    );
+    return (map['message'] as String?) ??
+        'Mật khẩu đã được đặt lại thành công.';
   }
 }

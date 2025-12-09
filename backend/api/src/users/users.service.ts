@@ -14,7 +14,7 @@ export interface UserPaginationParams {
 }
 
 export type UserEntity = Omit<users, 'password_hash'
- | 'two_factor_secret' | 'reset_token'
+  | 'two_factor_secret' | 'reset_token'
   | 'reset_token_expiry'
 >;
 
@@ -109,6 +109,28 @@ export class UsersService {
       data: {
         reset_token: token,
         reset_token_expiry: expiresAt,
+      },
+    });
+  }
+
+  async findByResetToken(token: string): Promise<users | null> {
+    const user = await this.prisma.users.findFirst({
+      where: {
+        reset_token: token,
+        reset_token_expiry: {
+          gt: new Date(), // Token must not be expired
+        },
+      },
+    });
+    return user;
+  }
+
+  async clearResetToken(userId: number): Promise<void> {
+    await this.prisma.users.update({
+      where: { id_users: userId },
+      data: {
+        reset_token: null,
+        reset_token_expiry: null,
       },
     });
   }
